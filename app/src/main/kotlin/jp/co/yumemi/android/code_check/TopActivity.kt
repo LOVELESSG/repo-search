@@ -6,15 +6,10 @@ package jp.co.yumemi.android.code_check
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import jp.co.yumemi.android.code_check.navigation.Screen
-import jp.co.yumemi.android.code_check.navigation.nav_graph.SetupNavGraph
-import jp.co.yumemi.android.code_check.ui.homepage.HomepageScreen
+import jp.co.yumemi.android.code_check.navigation.navGraph.SetupNavGraph
 import jp.co.yumemi.android.code_check.ui.theme.AppTheme
 import java.util.*
 
