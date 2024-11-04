@@ -10,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import jp.co.yumemi.android.code_check.navigation.Screen
+import jp.co.yumemi.android.code_check.navigation.nav_graph.SetupNavGraph
 import jp.co.yumemi.android.code_check.ui.homepage.HomepageScreen
 import jp.co.yumemi.android.code_check.ui.theme.AppTheme
 import java.util.*
@@ -20,29 +24,20 @@ class TopActivity : ComponentActivity() {
         lateinit var lastSearchDate: Date
     }
 
+    private lateinit var navController: NavHostController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                HomepageScreen()
+                navController = rememberNavController()
+
+                SetupNavGraph(
+                    navController = navController,
+                    startScreen = Screen.Home.route
+                )
             }
         }
     }
 
-}
-
-@Composable
-fun MyCompose() {
-    Text("hello compose")
-}
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Composable
-fun TestPreview() {
-    AppTheme {
-        MyCompose()
-    }
 }
