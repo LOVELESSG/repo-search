@@ -21,21 +21,17 @@ import jp.co.yumemi.android.code_check.navigation.Screen
 import jp.co.yumemi.android.code_check.ui.theme.AppTheme
 
 @Composable
-fun ResultItem(item: Item, navController: NavController) {
+fun ResultItem(
+    item: Item,
+    navController: NavController,
+    selectTargetItem: (Item) -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clickable {
-                navController.navigate(
-                    Screen.RepoDetails.route +
-                            "?name=${item.name}" +
-                            "&ownerIconUrl=${item.ownerIconUrl}" +
-                            "&language=${item.language}" +
-                            "&stargazersCount=${item.stargazersCount}" +
-                            "&watchersCount=${item.watchersCount}" +
-                            "&forksCount=${item.forksCount}" +
-                            "&openIssuesCount=${item.openIssuesCount}"
-                )
+                selectTargetItem(item)
+                navController.navigate(Screen.RepoDetails.route)
             }
             .fillMaxWidth()
             .padding(16.dp, 8.dp, 16.dp, 0.dp)
@@ -70,6 +66,10 @@ fun ResultItemPreview() {
         openIssuesCount = 452L,
     )
     AppTheme {
-        ResultItem(item = testItem, navController = rememberNavController())
+        ResultItem(
+            item = testItem,
+            navController = rememberNavController(),
+            selectTargetItem = {}
+        )
     }
 }

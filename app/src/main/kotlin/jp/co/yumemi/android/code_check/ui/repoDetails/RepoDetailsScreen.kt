@@ -23,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,22 +33,23 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
+import jp.co.yumemi.android.code_check.Item
 import jp.co.yumemi.android.code_check.R
 import jp.co.yumemi.android.code_check.components.InformationCard
 import jp.co.yumemi.android.code_check.ui.theme.AppTheme
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RepoDetailsScreen(
-    name: String,
-    ownerIconUrl: Any,
-    language: String,
-    stargazersCount: Long,
-    watchersCount: Long,
-    forksCount: Long,
-    openIssuesCount:Long,
+    targetStateFlow: StateFlow<Item?>,
     navController: NavController
 ) {
+    val targetState = targetStateFlow.collectAsState()
+    val target = targetState.value
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -68,19 +70,21 @@ fun RepoDetailsScreen(
             item {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     AsyncImage(
-                        model = ownerIconUrl,
+                        model = target?.ownerIconUrl,
                         contentDescription = "Owner Icon",
                         alignment = Alignment.Center
                     )
                     Surface(
                         modifier = Modifier.padding(8.dp)
                     ) {
-                        Text(
-                            text = name,
-                            style = MaterialTheme.typography.headlineLarge,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        if (target != null) {
+                            Text(
+                                text = target.name,
+                                style = MaterialTheme.typography.headlineLarge,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
 
                     Row(
@@ -95,7 +99,7 @@ fun RepoDetailsScreen(
                             icon = Icons.Default.Star,
                             description = "Stars",
                             cardName = "Stars",
-                            cardData = stargazersCount,
+                            cardData = target?.stargazersCount,
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .weight(1f)
@@ -104,7 +108,7 @@ fun RepoDetailsScreen(
                             icon = Icons.Default.RemoveRedEye,
                             description = "Watchers",
                             cardName = "Watchers",
-                            cardData = watchersCount,
+                            cardData = target?.watchersCount,
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .weight(1f)
@@ -113,7 +117,7 @@ fun RepoDetailsScreen(
                             icon = Icons.Default.Polyline,
                             description = "Forks",
                             cardName = "Forks",
-                            cardData = forksCount,
+                            cardData = target?.forksCount,
                             modifier = Modifier
                                 .weight(1f)
                         )
@@ -125,20 +129,22 @@ fun RepoDetailsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        InformationCard(
-                            icon = Icons.Default.Code,
-                            description = "Coding Languages",
-                            cardName = stringResource(R.string.written_language, language),
-                            cardData = null,
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .weight(1f)
-                        )
+                        if (target != null) {
+                            InformationCard(
+                                icon = Icons.Default.Code,
+                                description = "Coding Languages",
+                                cardName = stringResource(R.string.written_language, target.language),
+                                cardData = null,
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .weight(1f)
+                            )
+                        }
                         InformationCard(
                             icon = Icons.Default.Adjust,
                             description = "Open Issues",
                             cardName = "Open Issues",
-                            cardData = openIssuesCount,
+                            cardData = target?.openIssuesCount,
                             modifier = Modifier
                         )
                     }
@@ -154,14 +160,10 @@ fun RepoDetailsScreen(
 @Composable
 fun RepoDetailsScreenPreview() {
     AppTheme {
+        val target: Item? = null
+        val fakeTarget = MutableStateFlow(target).asStateFlow()
         RepoDetailsScreen(
-            name = "Kotlin/Project",
-            ownerIconUrl = R.drawable.jetbrains,
-            language = "Kotlin",
-            stargazersCount = 10390L,
-            watchersCount = 2342L,
-            forksCount = 8971L,
-            openIssuesCount = 452L,
+            targetStateFlow = fakeTarget,
             navController = rememberNavController()
         )
     }

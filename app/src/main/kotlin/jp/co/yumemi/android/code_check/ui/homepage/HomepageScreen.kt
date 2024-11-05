@@ -54,9 +54,9 @@ fun HomepageScreen(
     searchResults: StateFlow<MutableList<Item>>,
     searchRepo: (String) -> Unit,
     clearSearchResults: () -> Unit,
-    clearSearchError: () -> Unit
+    clearSearchError: () -> Unit,
+    selectTargetItem: (Item) -> Unit
 ) {
-
     var expanded by rememberSaveable { mutableStateOf(false) }
     var text by rememberSaveable { mutableStateOf("") }
     val resultsList by searchResults.collectAsState()
@@ -124,6 +124,7 @@ fun HomepageScreen(
                                         .clickable {
                                             if (text.isEmpty()){
                                                 expanded = false
+                                                clearSearchResults()
                                             } else {
                                                 text = ""
                                             }
@@ -150,7 +151,11 @@ fun HomepageScreen(
                 ) {
                     resultsList.forEach {
                         item {
-                            ResultItem(item = it, navController = navController)
+                            ResultItem(
+                                item = it,
+                                navController = navController,
+                                selectTargetItem = selectTargetItem
+                            )
                         }
                     }
                 }
@@ -183,7 +188,8 @@ fun HomepageScreenPreview() {
             searchError = fakeError,
             searchRepo = { },
             clearSearchResults = {},
-            clearSearchError = {}
+            clearSearchError = {},
+            selectTargetItem = {}
         )
     }
 }
