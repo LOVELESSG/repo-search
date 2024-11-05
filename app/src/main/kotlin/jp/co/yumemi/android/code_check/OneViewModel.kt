@@ -30,6 +30,12 @@ class OneViewModel: ViewModel() {
     private val _items = MutableStateFlow(mutableListOf<Item>())
     val items: StateFlow<MutableList<Item>> = _items.asStateFlow()
 
+    private val client = HttpClient(Android)
+
+    override fun onCleared() {
+        super.onCleared()
+        client.close()
+    }
 
     // Delete all search results when the search bar is not expanded
     fun clearSearchResults() {
@@ -40,7 +46,6 @@ class OneViewModel: ViewModel() {
 
     // 検索結果
     fun searchResults(inputText: String){
-        val client = HttpClient(Android)
 
         viewModelScope.launch {
             val response: HttpResponse = client.get("https://api.github.com/search/repositories") {

@@ -2,6 +2,7 @@ package jp.co.yumemi.android.code_check.ui.homepage
 
 import android.content.res.Configuration
 import android.os.Parcelable
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
@@ -69,6 +72,9 @@ fun HomepageScreen(
     var expanded by rememberSaveable { mutableStateOf(false) }
     var text by rememberSaveable { mutableStateOf("") }
     val resultsList by searchResults.collectAsState()
+
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
 
     Scaffold(
         topBar = {
@@ -104,7 +110,12 @@ fun HomepageScreen(
                             text = it
                         },
                         onSearch = {
-                            searchRepo(text)
+                            if (text.isNotBlank()){
+                                searchRepo(text)
+                                focusManager.clearFocus()
+                            } else {
+                                Toast.makeText(context, "Please input keyword", Toast.LENGTH_SHORT).show()
+                            }
                         },
                         expanded = expanded,
                         onExpandedChange = {
