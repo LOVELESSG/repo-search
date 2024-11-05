@@ -47,8 +47,10 @@ class OneViewModel: ViewModel() {
 
     // Delete all search results when the search bar is not expanded
     fun clearSearchResults() {
-        _items.value = _items.value.toMutableList().apply {
-            clear()
+        _items.update { currentItems ->
+            currentItems.toMutableList().apply {
+                clear()
+            }
         }
     }
 
@@ -71,7 +73,7 @@ class OneViewModel: ViewModel() {
                 }
 
                 val jsonBody = JSONObject(response.bodyAsText())
-                val jsonItems = jsonBody.optJSONArray("items")!!
+                val jsonItems = jsonBody.optJSONArray("items") ?: return@launch
                 val newItems = mutableListOf<Item>()
 
                 // アイテムの個数分ループする
@@ -80,7 +82,7 @@ class OneViewModel: ViewModel() {
                     newItems.add(
                         Item(
                             name = jsonItem.optString("full_name"),
-                            ownerIconUrl = jsonItem.optJSONObject("owner")!!.optString("avatar_url"),
+                            ownerIconUrl = jsonItem.optJSONObject("owner")?.optString("avatar_url") ?: "",
                             language = jsonItem.optString("language"),
                             stargazersCount = jsonItem.optLong("stargazers_count"),
                             watchersCount = jsonItem.optLong("watchers_count"),
