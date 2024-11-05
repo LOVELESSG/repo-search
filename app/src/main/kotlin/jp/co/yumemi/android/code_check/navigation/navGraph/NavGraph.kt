@@ -29,9 +29,11 @@ fun SetupNavGraph(
 
             HomepageScreen(
                 navController = navController,
+                searchError = oneViewModel.searchError,
                 searchResults = oneViewModel.items,
                 searchRepo = oneViewModel::searchResults,
-                clearSearchResults = oneViewModel::clearSearchResults
+                clearSearchResults = oneViewModel::clearSearchResults,
+                clearSearchError = oneViewModel::clearErrorMessage
             )
         }
 

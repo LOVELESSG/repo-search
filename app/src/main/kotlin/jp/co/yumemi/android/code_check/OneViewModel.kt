@@ -30,6 +30,9 @@ class OneViewModel: ViewModel() {
     private val _items = MutableStateFlow(mutableListOf<Item>())
     val items: StateFlow<MutableList<Item>> = _items.asStateFlow()
 
+    private val _searchError = MutableStateFlow<String?>(null)
+    val searchError: StateFlow<String?> = _searchError.asStateFlow()
+
     private val client = HttpClient(Android)
 
     override fun onCleared() {
@@ -44,45 +47,56 @@ class OneViewModel: ViewModel() {
         }
     }
 
+    // Clear the search error message
+    fun clearErrorMessage() {
+        _searchError.value = null
+    }
+
     // 検索結果
     fun searchResults(inputText: String){
 
         viewModelScope.launch {
-            val response: HttpResponse = client.get("https://api.github.com/search/repositories") {
-                header("Accept", "application/vnd.github.v3+json")
-                parameter("q", inputText)
-            }
 
-            val jsonBody = JSONObject(response.bodyAsText())
-            val jsonItems = jsonBody.optJSONArray("items")!!
-
-            // アイテムの個数分ループする
-            for (i in 0 until jsonItems.length()) {
-                val jsonItem = jsonItems.optJSONObject(i)!!
-                val name = jsonItem.optString("full_name")
-                val ownerIconUrl = jsonItem.optJSONObject("owner")!!.optString("avatar_url")
-                val language = jsonItem.optString("language")
-                val stargazersCount = jsonItem.optLong("stargazers_count")
-                val watchersCount = jsonItem.optLong("watchers_count")
-                val forksCount = jsonItem.optLong("forks_count")
-                val openIssuesCount = jsonItem.optLong("open_issues_count")
-
-                _items.value = _items.value.toMutableList().apply {
-                    add(
-                        Item(
-                            name = name,
-                            ownerIconUrl = ownerIconUrl,
-                            language = language,
-                            stargazersCount = stargazersCount,
-                            watchersCount = watchersCount,
-                            forksCount = forksCount,
-                            openIssuesCount = openIssuesCount
-                        )
-                    )
+            try {
+                val response: HttpResponse = client.get("https://api.github.com/search/repositories") {
+                    header("Accept", "application/vnd.github.v3+json")
+                    parameter("q", inputText)
                 }
+
+                val jsonBody = JSONObject(response.bodyAsText())
+                val jsonItems = jsonBody.optJSONArray("items")!!
+
+                // アイテムの個数分ループする
+                for (i in 0 until jsonItems.length()) {
+                    val jsonItem = jsonItems.optJSONObject(i)!!
+                    val name = jsonItem.optString("full_name")
+                    val ownerIconUrl = jsonItem.optJSONObject("owner")!!.optString("avatar_url")
+                    val language = jsonItem.optString("language")
+                    val stargazersCount = jsonItem.optLong("stargazers_count")
+                    val watchersCount = jsonItem.optLong("watchers_count")
+                    val forksCount = jsonItem.optLong("forks_count")
+                    val openIssuesCount = jsonItem.optLong("open_issues_count")
+
+                    _items.value = _items.value.toMutableList().apply {
+                        add(
+                            Item(
+                                name = name,
+                                ownerIconUrl = ownerIconUrl,
+                                language = language,
+                                stargazersCount = stargazersCount,
+                                watchersCount = watchersCount,
+                                forksCount = forksCount,
+                                openIssuesCount = openIssuesCount
+                            )
+                        )
+                    }
+                }
+
+                lastSearchDate = Date()
+            } catch (e: Exception) {
+                _searchError.value = "Search failed"
             }
 
-            lastSearchDate = Date()
         }
     }
 }
