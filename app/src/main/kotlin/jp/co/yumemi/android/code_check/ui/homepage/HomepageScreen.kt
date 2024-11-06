@@ -37,9 +37,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import jp.co.yumemi.android.code_check.Item
 import jp.co.yumemi.android.code_check.R
 import jp.co.yumemi.android.code_check.components.ResultItem
+import jp.co.yumemi.android.code_check.data.Item
 import jp.co.yumemi.android.code_check.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
