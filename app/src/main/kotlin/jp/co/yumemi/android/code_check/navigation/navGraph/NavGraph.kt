@@ -33,7 +33,8 @@ fun SetupNavGraph(
                 searchRepo = oneViewModel::searchResults,
                 clearSearchResults = oneViewModel::clearSearchResults,
                 clearSearchError = oneViewModel::clearErrorMessage,
-                selectTargetItem = oneViewModel::selectTargetItem
+                selectTargetItem = oneViewModel::selectTargetItem,
+                addVisitHistory = oneViewModel::addVisitHistory
             )
         }
 
@@ -50,7 +51,9 @@ fun SetupNavGraph(
             route = Screen.VisitHistory.route
         ) {
             VisitHistoryScreen(
-                navController = navController
+                navController = navController,
+                visitHistories = oneViewModel.visitHistories,
+                deleteVisitHistory = oneViewModel::deleteVisitHistory
             )
         }
     }

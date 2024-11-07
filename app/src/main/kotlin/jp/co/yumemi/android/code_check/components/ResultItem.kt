@@ -17,20 +17,34 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import jp.co.yumemi.android.code_check.data.Item
+import jp.co.yumemi.android.code_check.data.room.models.VisitHistory
 import jp.co.yumemi.android.code_check.navigation.Screen
 import jp.co.yumemi.android.code_check.ui.theme.AppTheme
+import java.time.LocalDateTime
 
 @Composable
 fun ResultItem(
     item: Item,
     navController: NavController,
-    selectTargetItem: (Item) -> Unit
+    selectTargetItem: (Item) -> Unit,
+    addVisitHistory: (VisitHistory) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clickable {
+                val visitHistory = VisitHistory(
+                    name = item.name,
+                    ownerIconUrl = item.ownerIconUrl,
+                    language = item.language,
+                    stargazersCount = item.stargazersCount,
+                    watchersCount = item.watchersCount,
+                    forksCount = item.forksCount,
+                    openIssuesCount = item.openIssuesCount,
+                    addTime = LocalDateTime.now()
+                )
                 selectTargetItem(item)
+                addVisitHistory(visitHistory)
                 navController.navigate(Screen.RepoDetails.route)
             }
             .fillMaxWidth()
@@ -69,7 +83,8 @@ fun ResultItemPreview() {
         ResultItem(
             item = testItem,
             navController = rememberNavController(),
-            selectTargetItem = {}
+            selectTargetItem = {},
+            addVisitHistory = {}
         )
     }
 }

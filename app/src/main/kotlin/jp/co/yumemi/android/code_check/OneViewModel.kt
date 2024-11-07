@@ -14,9 +14,12 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import jp.co.yumemi.android.code_check.TopActivity.Companion.lastSearchDate
 import jp.co.yumemi.android.code_check.data.Item
+import jp.co.yumemi.android.code_check.data.room.models.VisitHistory
+import jp.co.yumemi.android.code_check.data.room.repository.Repository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -25,7 +28,11 @@ import java.util.Date
 /**
  * Homepage で使う
  */
-class OneViewModel: ViewModel() {
+class OneViewModel(
+    private val repository: Repository = Graph.repository
+): ViewModel() {
+    private val _visitHistories = MutableStateFlow(mutableListOf<VisitHistory>())
+    val visitHistories: StateFlow<MutableList<VisitHistory>> = _visitHistories.asStateFlow()
 
     private val _items = MutableStateFlow(mutableListOf<Item>())
     val items: StateFlow<MutableList<Item>> = _items.asStateFlow()
@@ -38,6 +45,10 @@ class OneViewModel: ViewModel() {
     val targetItem: StateFlow<Item?> = _targetItem.asStateFlow()
 
     private val client = HttpClient(Android)
+
+    init {
+        getVisitHistories()
+    }
 
     override fun onCleared() {
         super.onCleared()
@@ -100,6 +111,31 @@ class OneViewModel: ViewModel() {
                 _searchError.value = "Search failed"
             }
 
+        }
+    }
+
+    // Visit History Part
+    // Get all visit history
+    private fun getVisitHistories() {
+        viewModelScope.launch {
+            repository.visitHistory.collectLatest {
+                val visitHistoryList = it
+                _visitHistories.update { visitHistoryList.toMutableList() }
+            }
+        }
+    }
+
+    // Add visit history to database
+    fun addVisitHistory(visitHistory: VisitHistory) {
+        viewModelScope.launch {
+            repository.insertVisitHistory(visitHistory)
+        }
+    }
+
+    // Delete visit history from database
+    fun deleteVisitHistory(visitHistory: VisitHistory) {
+        viewModelScope.launch {
+            repository.deleteVisitHistory(visitHistory)
         }
     }
 }
