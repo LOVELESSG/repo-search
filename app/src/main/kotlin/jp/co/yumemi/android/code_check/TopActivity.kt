@@ -11,7 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import jp.co.yumemi.android.code_check.navigation.Screen
 import jp.co.yumemi.android.code_check.navigation.navGraph.SetupNavGraph
 import jp.co.yumemi.android.code_check.ui.theme.AppTheme
-import java.util.*
+import java.util.Date
 
 class TopActivity : ComponentActivity() {
 

@@ -30,7 +30,7 @@ fun InformationCard(
 ) {
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.primary,
+        color = MaterialTheme.colorScheme.surfaceContainerHighest,
         modifier = modifier
     ) {
         Column(

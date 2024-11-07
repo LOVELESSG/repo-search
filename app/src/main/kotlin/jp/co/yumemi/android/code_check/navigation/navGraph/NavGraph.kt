@@ -9,6 +9,7 @@ import jp.co.yumemi.android.code_check.OneViewModel
 import jp.co.yumemi.android.code_check.navigation.Screen
 import jp.co.yumemi.android.code_check.ui.homepage.HomepageScreen
 import jp.co.yumemi.android.code_check.ui.repoDetails.RepoDetailsScreen
+import jp.co.yumemi.android.code_check.ui.visitHistory.VisitHistoryScreen
 
 
 @Composable
@@ -25,7 +26,6 @@ fun SetupNavGraph(
         composable(
             route = Screen.Home.route
         ) {
-
             HomepageScreen(
                 navController = navController,
                 searchError = oneViewModel.searchError,
@@ -45,5 +45,14 @@ fun SetupNavGraph(
                 navController = navController
             )
         }
+
+        composable(
+            route = Screen.VisitHistory.route
+        ) {
+            VisitHistoryScreen(
+                navController = navController
+            )
+        }
     }
+
 }

@@ -2,7 +2,6 @@ package jp.co.yumemi.android.code_check.ui.homepage
 
 import android.content.res.Configuration
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +13,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import jp.co.yumemi.android.code_check.R
+import jp.co.yumemi.android.code_check.components.AppSuiteScaffold
 import jp.co.yumemi.android.code_check.components.ResultItem
 import jp.co.yumemi.android.code_check.data.Item
 import jp.co.yumemi.android.code_check.ui.theme.AppTheme
@@ -76,52 +78,56 @@ fun HomepageScreen(
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center
-        ) {
-            SearchBar(
+        AppSuiteScaffold(navController, innerPadding) {
+            Column(
                 modifier = Modifier
-                    .semantics { traversalIndex = 0f }
-                    .padding(
-                        when (expanded) {
-                            false -> 16
-                            true -> 0
-                        }.dp,
-                        8.dp
-                    ),
-                inputField = {
-                    SearchBarDefaults.InputField(
-                        query = text,
-                        onQueryChange = {
-                            text = it
-                        },
-                        onSearch = {
-                            if (text.isNotBlank()){
-                                searchRepo(text)
-                                focusManager.clearFocus()
-                            } else {
-                                Toast.makeText(context, "Please input keyword", Toast.LENGTH_SHORT).show()
-                            }
-                        },
-                        expanded = expanded,
-                        onExpandedChange = {
-                            expanded = it
-                        },
-                        placeholder = { Text(stringResource(R.string.searchInputText_hint)) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Search Icon"
-                            )
-                        },
-                        trailingIcon = {
-                            if (expanded) {
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center
+            ) {
+                SearchBar(
+                    modifier = Modifier
+                        .semantics { traversalIndex = 0f }
+                        .padding(
+                            when (expanded) {
+                                false -> 16
+                                true -> 0
+                            }.dp,
+                            8.dp
+                        ),
+                    inputField = {
+                        SearchBarDefaults.InputField(
+                            query = text,
+                            onQueryChange = {
+                                text = it
+                            },
+                            onSearch = {
+                                if (text.isNotBlank()){
+                                    searchRepo(text)
+                                    focusManager.clearFocus()
+                                } else {
+                                    Toast.makeText(context, "Please input keyword", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            expanded = expanded,
+                            onExpandedChange = {
+                                expanded = it
+                            },
+                            placeholder = {
+                                Text(
+                                    text = stringResource(R.string.searchInputText_hint),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            },
+                            leadingIcon = {
                                 Icon(
-                                    modifier = Modifier
-                                        .clickable {
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "Search Icon",
+                                    )
+                            },
+                            trailingIcon = {
+                                if (expanded) {
+                                    IconButton(
+                                        onClick = {
                                             if (text.isEmpty()){
                                                 expanded = false
                                                 clearSearchResults()
@@ -129,44 +135,48 @@ fun HomepageScreen(
                                                 text = ""
                                             }
                                         },
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Close Icon"
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Close Icon"
+                                        )
+                                    }
+                                }
+                            }
+                        )
+                    },
+                    expanded = expanded,
+                    onExpandedChange = {
+                        expanded = it
+                        if (!expanded) {
+                            clearSearchResults()
+                            text = ""
+                        }
+                    }
+                ) {
+                    // Show the search result
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        resultsList.forEach {
+                            item {
+                                ResultItem(
+                                    item = it,
+                                    navController = navController,
+                                    selectTargetItem = selectTargetItem
                                 )
                             }
                         }
-                    )
-                },
-                expanded = expanded,
-                onExpandedChange = {
-                    expanded = it
-                    if (!expanded) {
-                        clearSearchResults()
-                        text = ""
                     }
-                }
-            ) {
-                // Show the search result
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    resultsList.forEach {
-                        item {
-                            ResultItem(
-                                item = it,
-                                navController = navController,
-                                selectTargetItem = selectTargetItem
-                            )
-                        }
-                    }
-                }
-                
-            }
-        }
 
-        LaunchedEffect(searchErrorMessage) {
-            searchErrorMessage?.let {
-                Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-                clearSearchError()
+                }
+            }
+
+            LaunchedEffect(searchErrorMessage) {
+                searchErrorMessage?.let {
+                    Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+                    clearSearchError()
+                }
             }
         }
     }
