@@ -54,7 +54,7 @@ fun VisitHistoryScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                visitHistoryList.reversed().forEachIndexed() {index, visitHistory ->
+                visitHistoryList.reversed().forEachIndexed {index, visitHistory ->
                     item {
                         if (index == 0 ||
                             visitHistory.addTime.hour !=

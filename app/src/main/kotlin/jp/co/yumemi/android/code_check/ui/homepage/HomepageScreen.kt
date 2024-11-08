@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,14 +24,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,7 +42,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -72,18 +70,14 @@ fun HomepageScreen(
     clearSearchError: () -> Unit,
     selectTargetItem: (Item) -> Unit,
     addVisitHistory: (VisitHistory) -> Unit,
-    addSearchHistory: (SearchHistory) -> Unit
+    addSearchHistory: (SearchHistory) -> Unit,
+    deleteSearchHistory: (SearchHistory) -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var text by rememberSaveable { mutableStateOf("") }
     val resultsList by searchResults.collectAsState()
     val searchErrorMessage by searchError.collectAsState()
     val searchHistoryList by searchHistories.collectAsState()
-
-    /*val searchHistory = remember { mutableStateListOf(
-        "First history",
-        "Second History"
-    ) }*/
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -185,7 +179,6 @@ fun HomepageScreen(
                     }
                 ) {
                     if (text.isEmpty()) { // if search bar is empty and has been expanded -> show search history
-                        Spacer(modifier = Modifier.height(16.dp))
                         LazyColumn(modifier = Modifier.fillMaxWidth()) {
                             searchHistoryList.reversed().forEach {
                                 item {
@@ -193,7 +186,7 @@ fun HomepageScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier
                                             .clickable { text = it.searchText }
-                                            .padding(16.dp)
+                                            .padding(16.dp, 4.dp)
                                             .fillMaxWidth()
 
                                     ) {
@@ -202,13 +195,25 @@ fun HomepageScreen(
                                             imageVector = Icons.Default.History,
                                             contentDescription = "Search History Icon"
                                         )
-                                        Text(text = it.searchText)
+                                        Text(
+                                            text = it.searchText,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        IconButton(
+                                            onClick = {
+                                                val targetSearchHistory = SearchHistory(it.searchText)
+                                                deleteSearchHistory(targetSearchHistory)
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = "Delete Search History"
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
-
                     } else { // Show the search results
                         LazyColumn(
                             modifier = Modifier.fillMaxWidth()
@@ -261,7 +266,8 @@ fun HomepageScreenPreview() {
             clearSearchError = {},
             selectTargetItem = {},
             addVisitHistory = {},
-            addSearchHistory = {}
+            addSearchHistory = {},
+            deleteSearchHistory = {}
         )
     }
 }

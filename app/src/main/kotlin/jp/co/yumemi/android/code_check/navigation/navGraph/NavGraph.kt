@@ -36,7 +36,8 @@ fun SetupNavGraph(
                 clearSearchError = oneViewModel::clearErrorMessage,
                 selectTargetItem = oneViewModel::selectTargetItem,
                 addVisitHistory = oneViewModel::addVisitHistory,
-                addSearchHistory = oneViewModel::addSearchHistory
+                addSearchHistory = oneViewModel::addSearchHistory,
+                deleteSearchHistory = oneViewModel::deleteSearchHistory
             )
         }
 
