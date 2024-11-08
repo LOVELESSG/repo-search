@@ -88,11 +88,11 @@ OnePlus 8(android 14)
 
 ### ScreenShot
 
-Smartphone:
+Smartphone:<br>
 <img src="docs/smartphone_homepage.png" width="320"/> <img src="docs/smartphone_search.png" width="320"/> <img src="docs/smartphone_visit.png" width="320"><br>
 <img src="docs/smartphone_homepage_horizontal.png" width="320">   <img src="docs/smartphone_visit_horizontal.png" width="320">
 
-Tablet:
+Tablet:<br>
 <img src="docs/tablet_homepage.jpg" width="320"> <img src="docs/tablet_search.jpg" width="320"><br>
 <img src="docs/tablet_detail.jpg" width="320"> <img src="docs/tablet_visit.jpg" width="320"><br>
 <img src="docs/tablet_homepage_vertical.jpg" width="160"> <img src="docs/tablet_visit_vertical.jpg" width="160">
