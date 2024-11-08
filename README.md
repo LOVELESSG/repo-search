@@ -57,3 +57,70 @@ ChatGPTなどAIサービスの利用は禁止しておりません。
 また、弊社コードチェック担当者もAIサービスを利用させていただく場合があります。
 
 AIサービスの利用は差し控えてもらいたいなどのご要望がある場合は、お気軽にお申し出ください。
+
+## アプリケーションのリファクタリング結果の概要
+
+### 基礎
+- 元のアプリケーションのバグを解決しました。
+- 元のコードの不合理な変数名とフォーマットを調整しました。
+- 変数、関数、およびパッケージの命名方法を命名規則に基づいて調整しました。
+- 関連ライブラリファイルのバージョンを更新しました。
+- コード構造を調整し、データ関連のビジネスロジックをUIから分離する。
+- ネットワーク例外を処理し、ネットワーク例外が発生したときにユーザーにプロンプトを送信します。
+- Compose関連ライブラリをインポートし、プロジェクトをComposeに移行しました。
+
+### UI
+- UIインタフェースを大幅に調整し、Material Design 3（Material You）に基づく最新の設計を導入しました。
+- ダークモードに適合し、システム設定を適用して自動的にダークモードに入る。
+- 適応UIを実現し、携帯電話の横画面や各種の大画面デバイスに適している。
+- UIインタフェースにDynamic colorサポートを導入します。（Android 12以上）
+
+### 新機能
+- Jetpack Room ライブラリを導入し、Android local databaseのサポートを追加してデータの永続性を実現しました。
+- 訪問履歴を表示および削除し、local databaseに閲覧履歴を保存する機能が追加されました。
+- 検索履歴を表示および削除し、local databaseに検索履歴を保存する機能が追加されました。
+
+### テスト機種
+Sony XZ Premium(android 9)
+Samsung Galaxy Tab S4(android 10)
+Nexus 5(Virtual Device - android 12)
+OnePlus 8(android 14)
+
+### ScreenShot
+
+Smartphone:
+<img src="docs/smartphone_homepage.png" width="320"/>   <img src="docs/smartphone_search.png" width="320"/>   <img src="docs/smartphone_visit.png" width="320">
+<img src="docs/smartphone_homepage_horizontal.png" width="320">   <img src="docs/smartphone_visit_horizontal.png" width="320">
+
+Tablet:
+<img src="docs/tablet_homepage.jpg" width="320">   <img src="docs/tablet_search.jpg" width="320">
+<img src="docs/tablet_detail.jpg" width="320">   <img src="docs/tablet_visit.jpg" width="320">
+<img src="docs/tablet_homepage_vertical.jpg" width="160">   <img src="docs/tablet_visit_vertical.jpg" width="160">
+
+## Overview of application refactoring results
+
+### Basics
+- Fixed bugs in the original app.
+- Adjustments have been made to the unreasonable variable names and formats in the original code.
+- The names of variables, functions and packages have been adjusted according to the naming rules.
+- Necessary updates have been made to relevant library file versions.
+- The code structure was adjusted to separate data-related business logic from the UI.
+- Handles network exceptions and prompts the user when a network exception occurs.
+- Imported Compose libraries and migrated the project to Compose.
+
+### UI
+- Major adjustments have been made to the UI interface, using the latest design and guidelines based on Material Design 3 (Material You).
+- Adapted to dark mode, the application theme automatically changes according to the system settings.
+- An adaptive UI is implemented, adapting to the horizontal screen of mobile phones and various large-screen devices.
+- Introduced dynamic color for UI interfaces. (Android 12 and above)
+
+### New Features
+- The Jetpack Room library is introduced to add support for Android local database for data persistence.
+- Added the feature of viewing and deleting visit history, and saved the visit history in the local database.
+- Added the feature of viewing and deleting search history, and save search history in the local database.
+
+### Test Devices
+Sony XZ Premium(android 9)
+Samsung Galaxy Tab S4(android 10)
+Nexus 5(Virtual Device - android 12)
+OnePlus 8(android 14)
