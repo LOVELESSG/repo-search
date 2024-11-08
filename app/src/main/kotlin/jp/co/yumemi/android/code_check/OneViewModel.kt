@@ -14,6 +14,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import jp.co.yumemi.android.code_check.TopActivity.Companion.lastSearchDate
 import jp.co.yumemi.android.code_check.data.Item
+import jp.co.yumemi.android.code_check.data.room.models.SearchHistory
 import jp.co.yumemi.android.code_check.data.room.models.VisitHistory
 import jp.co.yumemi.android.code_check.data.room.repository.Repository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,9 @@ import java.util.Date
 class OneViewModel(
     private val repository: Repository = Graph.repository
 ): ViewModel() {
+    private val _searchHistories = MutableStateFlow(mutableListOf<SearchHistory>())
+    val searchHistories: StateFlow<MutableList<SearchHistory>> =_searchHistories.asStateFlow()
+
     private val _visitHistories = MutableStateFlow(mutableListOf<VisitHistory>())
     val visitHistories: StateFlow<MutableList<VisitHistory>> = _visitHistories.asStateFlow()
 
@@ -48,6 +52,7 @@ class OneViewModel(
 
     init {
         getVisitHistories()
+        getSearchHistories()
     }
 
     override fun onCleared() {
@@ -136,6 +141,31 @@ class OneViewModel(
     fun deleteVisitHistory(visitHistory: VisitHistory) {
         viewModelScope.launch {
             repository.deleteVisitHistory(visitHistory)
+        }
+    }
+
+    // Search History Part
+    // Get all search history
+    private fun getSearchHistories() {
+        viewModelScope.launch {
+            repository.searchHistory.collectLatest {
+                val searchHistoryList = it
+                _searchHistories.update { searchHistoryList.toMutableList() }
+            }
+        }
+    }
+
+    // Add visit history to database
+    fun addSearchHistory(searchHistory: SearchHistory) {
+        viewModelScope.launch {
+            repository.insertSearchHistory(searchHistory)
+        }
+    }
+
+    // Delete visit history from database
+    fun deleteSearchHistory(searchHistory: SearchHistory) {
+        viewModelScope.launch {
+            repository.deleteSearchHistory(searchHistory)
         }
     }
 }

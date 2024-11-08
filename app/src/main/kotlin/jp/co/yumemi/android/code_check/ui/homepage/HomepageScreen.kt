@@ -2,8 +2,10 @@ package jp.co.yumemi.android.code_check.ui.homepage
 
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -20,12 +23,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,6 +52,7 @@ import jp.co.yumemi.android.code_check.R
 import jp.co.yumemi.android.code_check.components.AppSuiteScaffold
 import jp.co.yumemi.android.code_check.components.ResultItem
 import jp.co.yumemi.android.code_check.data.Item
+import jp.co.yumemi.android.code_check.data.room.models.SearchHistory
 import jp.co.yumemi.android.code_check.data.room.models.VisitHistory
 import jp.co.yumemi.android.code_check.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,16 +66,24 @@ fun HomepageScreen(
     navController: NavController,
     searchError: StateFlow<String?>,
     searchResults: StateFlow<MutableList<Item>>,
+    searchHistories: StateFlow<MutableList<SearchHistory>>,
     searchRepo: (String) -> Unit,
     clearSearchResults: () -> Unit,
     clearSearchError: () -> Unit,
     selectTargetItem: (Item) -> Unit,
-    addVisitHistory: (VisitHistory) -> Unit
+    addVisitHistory: (VisitHistory) -> Unit,
+    addSearchHistory: (SearchHistory) -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var text by rememberSaveable { mutableStateOf("") }
     val resultsList by searchResults.collectAsState()
     val searchErrorMessage by searchError.collectAsState()
+    val searchHistoryList by searchHistories.collectAsState()
+
+    /*val searchHistory = remember { mutableStateListOf(
+        "First history",
+        "Second History"
+    ) }*/
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -116,6 +130,8 @@ fun HomepageScreen(
                             },
                             onSearch = {
                                 if (text.isNotBlank()){
+                                    val searchHistory = SearchHistory(text)
+                                    addSearchHistory(searchHistory)
                                     searchRepo(text)
                                     focusManager.clearFocus()
                                 } else {
@@ -142,9 +158,9 @@ fun HomepageScreen(
                                 if (expanded) {
                                     IconButton(
                                         onClick = {
+                                            clearSearchResults()
                                             if (text.isEmpty()){
                                                 expanded = false
-                                                clearSearchResults()
                                             } else {
                                                 text = ""
                                             }
@@ -168,18 +184,44 @@ fun HomepageScreen(
                         }
                     }
                 ) {
-                    // Show the search result
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        resultsList.forEach {
-                            item {
-                                ResultItem(
-                                    item = it,
-                                    navController = navController,
-                                    selectTargetItem = selectTargetItem,
-                                    addVisitHistory = addVisitHistory
-                                )
+                    if (text.isEmpty()) { // if search bar is empty and has been expanded -> show search history
+                        Spacer(modifier = Modifier.height(16.dp))
+                        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                            searchHistoryList.reversed().forEach {
+                                item {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .clickable { text = it.searchText }
+                                            .padding(16.dp)
+                                            .fillMaxWidth()
+
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier.padding(end = 8.dp),
+                                            imageVector = Icons.Default.History,
+                                            contentDescription = "Search History Icon"
+                                        )
+                                        Text(text = it.searchText)
+                                    }
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                    } else { // Show the search results
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            resultsList.forEach {
+                                item {
+                                    ResultItem(
+                                        item = it,
+                                        navController = navController,
+                                        selectTargetItem = selectTargetItem,
+                                        addVisitHistory = addVisitHistory
+                                    )
+                                }
                             }
                         }
                     }
@@ -204,6 +246,8 @@ fun HomepageScreen(
 fun HomepageScreenPreview() {
     val searchResults = remember { mutableListOf<Item>() }
     val fakeResults = MutableStateFlow(searchResults).asStateFlow()
+    val searchHistory = remember { mutableListOf<SearchHistory>() }
+    val fakeSearchHistory = MutableStateFlow(searchHistory).asStateFlow()
     val searchError: String? = null
     val fakeError = MutableStateFlow(searchError).asStateFlow()
     AppTheme {
@@ -211,11 +255,13 @@ fun HomepageScreenPreview() {
             navController = rememberNavController(),
             searchResults = fakeResults,
             searchError = fakeError,
+            searchHistories = fakeSearchHistory,
             searchRepo = { },
             clearSearchResults = {},
             clearSearchError = {},
             selectTargetItem = {},
-            addVisitHistory = {}
+            addVisitHistory = {},
+            addSearchHistory = {}
         )
     }
 }

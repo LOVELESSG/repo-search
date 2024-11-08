@@ -16,12 +16,14 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.core.layout.WindowWidthSizeClass
+import jp.co.yumemi.android.code_check.R
 import jp.co.yumemi.android.code_check.navigation.Screen
 
 @Composable
@@ -67,7 +69,10 @@ private fun navigationSuiteItems(
         },
         label = { Text("History") },
         icon = {
-            Icon(imageVector = Icons.Default.History, contentDescription = "Visit History Page")
+            Icon(
+                painter = painterResource(R.drawable.outline_footprint_24),
+                contentDescription = "Visit History Page"
+            )
         }
     )
 }

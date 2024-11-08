@@ -30,11 +30,13 @@ fun SetupNavGraph(
                 navController = navController,
                 searchError = oneViewModel.searchError,
                 searchResults = oneViewModel.items,
+                searchHistories = oneViewModel.searchHistories,
                 searchRepo = oneViewModel::searchResults,
                 clearSearchResults = oneViewModel::clearSearchResults,
                 clearSearchError = oneViewModel::clearErrorMessage,
                 selectTargetItem = oneViewModel::selectTargetItem,
-                addVisitHistory = oneViewModel::addVisitHistory
+                addVisitHistory = oneViewModel::addVisitHistory,
+                addSearchHistory = oneViewModel::addSearchHistory
             )
         }
 

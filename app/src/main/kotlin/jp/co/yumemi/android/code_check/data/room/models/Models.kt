@@ -19,3 +19,10 @@ data class VisitHistory (
     val openIssuesCount: Long,
     val addTime: LocalDateTime
 )
+
+
+@Entity(tableName = "search_histories")
+data class SearchHistory(
+    @PrimaryKey
+    val searchText: String
+)

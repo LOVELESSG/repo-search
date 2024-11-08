@@ -9,7 +9,8 @@ object Graph {
 
     val repository by lazy {
         Repository(
-            visitHistoryDao = db.visitHistoryDao()
+            visitHistoryDao = db.visitHistoryDao(),
+            searchHistoryDao = db.searchHistoryDao()
         )
     }
 

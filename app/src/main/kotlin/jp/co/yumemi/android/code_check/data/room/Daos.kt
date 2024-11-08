@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import jp.co.yumemi.android.code_check.data.room.models.SearchHistory
 import jp.co.yumemi.android.code_check.data.room.models.VisitHistory
 import kotlinx.coroutines.flow.Flow
 
@@ -18,4 +19,16 @@ interface VisitHistoryDao {
 
     @Query("SELECT * FROM visit_histories")
     fun getAllHistories(): Flow<List<VisitHistory>>
+}
+
+@Dao
+interface SearchHistoryDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(history: SearchHistory)
+
+    @Delete
+    suspend fun delete(history: SearchHistory)
+
+    @Query("SELECT * FROM search_histories")
+    fun getAllHistories(): Flow<List<SearchHistory>>
 }

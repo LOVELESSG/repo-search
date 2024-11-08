@@ -6,12 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import jp.co.yumemi.android.code_check.data.converter.LocalDateTimeConverter
+import jp.co.yumemi.android.code_check.data.room.models.SearchHistory
 import jp.co.yumemi.android.code_check.data.room.models.VisitHistory
 
-@Database(entities = [VisitHistory::class], version = 1, exportSchema = false)
+@Database(entities = [VisitHistory::class, SearchHistory::class], version = 1, exportSchema = false)
 @TypeConverters(LocalDateTimeConverter::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun visitHistoryDao(): VisitHistoryDao
+    abstract fun searchHistoryDao(): SearchHistoryDao
 
     companion object {
         @Volatile
